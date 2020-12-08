@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.joborders import JobOrderModel
+from flask_jwt import jwt_required
 
 
 class JobOrder(Resource):
@@ -8,6 +9,7 @@ class JobOrder(Resource):
     parser.add_argument("item", type=str)
     parser.add_argument("job_description", type=str)
 
+    @jwt_required()
     def get(self, id):
         job_order = JobOrderModel.find_by_id(id)
 
@@ -16,6 +18,7 @@ class JobOrder(Resource):
 
         return {"message": "Job Order not found."}, 404
 
+    @jwt_required()
     def post(self, id):
         if not str(id).startswith("JO") and len(id) != 9:
             return {"message": "The job order is invalid.".format(id)}, 400
@@ -35,6 +38,7 @@ class JobOrder(Resource):
 
         return job_order.json(), 201
 
+    @jwt_required()
     def delete(self, id):
         job_order = JobOrderModel.find_by_id(id)
 
@@ -47,6 +51,7 @@ class JobOrder(Resource):
                 "message": "A Job Order with id '{}' already exists.".format(id)
             }, 400
 
+    @jwt_required()
     def put(self, id):
         data = JobOrder.parser.parse_args()
 
@@ -68,6 +73,8 @@ class JobOrder(Resource):
 
 
 class JobOrderList(Resource):
+
+    @jwt_required()
     def get(self):
         return {
             "job_orders": [job_order.json() for job_order in JobOrderModel.query.all()]
@@ -75,6 +82,8 @@ class JobOrderList(Resource):
 
 
 class UUID(Resource):
+
+    @jwt_required()
     def get(self):
         job_order = JobOrderModel.query.order_by(JobOrderModel.id.desc()).first()
         uuid = "JO0000001"
