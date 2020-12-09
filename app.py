@@ -15,10 +15,13 @@ app.secret_key = "SECRET"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # app.config['JWT_AUTH_URL_RULE'] = '/login' # IF we want to change authentication endpooint
-app.config['JWT_EXPIRATION_DELTA'] = timedelta(hours=8) # Set to 8 hours, change the duration of the token
+
+# Set to 8 hours, change the duration of the token
+app.config['JWT_EXPIRATION_DELTA'] = timedelta(hours=8)
 
 api = Api(app)
 jwt = JWT(app, authenticate, identity)
+
 
 @app.before_first_request
 def create_tables():
