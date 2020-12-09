@@ -8,13 +8,14 @@ from security import authenticate, identity
 
 from resources.joborders import JobOrder, JobOrderList, UUID
 from resources.brands import Brand, BrandList
-from resources.user import UserRegister
+from resources.user import UserRegister, UserList, User
 
 app = Flask(__name__)
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db" Change when no Docker
 app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:admin@db/hexacom"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.config['JWT_AUTH_URL_RULE'] = '/login' # IF we want to change authentication endpooint
+# IF we want to change authentication endpooint
+app.config["JWT_AUTH_URL_RULE"] = "/login"
 
 # Set to 8 hours, change the duration of the token
 app.config["JWT_EXPIRATION_DELTA"] = timedelta(hours=8)
@@ -34,6 +35,8 @@ api.add_resource(Brand, "/brand/<string:name>")
 api.add_resource(BrandList, "/brands")
 api.add_resource(UUID, "/job_order/generate_uid")
 api.add_resource(UserRegister, "/register")
+api.add_resource(UserList, "/users")
+api.add_resource(User, "/user/<string:username>")
 
 if __name__ == "__main__":
     db.init_app(app)

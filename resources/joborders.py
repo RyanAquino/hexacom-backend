@@ -6,12 +6,12 @@ from flask_jwt import jwt_required
 
 class JobOrder(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument(
-        "technician_name", required=True, type=str, help="Technician name is required"
-    )
     parser.add_argument("item", type=str, required=True, help="Item is required")
     parser.add_argument(
         "job_description", type=str, required=True, help="Job Description is required"
+    )
+    parser.add_argument(
+        "technician_id", required=True, type=int, help="Technician id is required"
     )
     parser.add_argument(
         "brand_id", type=int, required=True, help="Brand ID is required"
@@ -38,16 +38,22 @@ class JobOrder(Resource):
 
         data = JobOrder.parser.parse_args()
 
-        job_order = JobOrderModel(_id, **data)
-
         brand = BrandModel.find_by_id(data["brand_id"])
+
+        user_id = BrandModel.find_by_id(data["technician_id"])
 
         if not brand:
             return {
                 "message": "The Brand ID {} is not found.".format(data["brand_id"])
             }, 400
 
+        if not user_id:
+            return {
+                "message": "The Brand ID {} is not found.".format(data["technician_id"])
+            }, 400
+
         try:
+            job_order = JobOrderModel(_id, **data)
             job_order.save_to_db()
         except Exception:
             return {"message": "An error occured while adding the job order."}, 500
@@ -69,21 +75,29 @@ class JobOrder(Resource):
 
         job_order = JobOrderModel.find_by_id(_id)
 
+        brand = BrandModel.find_by_id(data["brand_id"])
+
+        user_id = BrandModel.find_by_id(data["technician_id"])
+
+        if not brand:
+            return {
+                "message": "The Brand ID {} is not found.".format(data["brand_id"])
+            }, 400
+
+        if not user_id:
+            return {
+                "message": "The User ID {} is not found.".format(data["technician_id"])
+            }, 400
+
         if job_order is None:
             data = JobOrder.parser.parse_args()
 
-            brand = BrandModel.find_by_id(data["brand_id"])
-
-            if not brand:
-                return {
-                    "message": "The Brand ID {} is not found.".format(data["brand_id"])
-                }, 400
             try:
                 job_order = JobOrderModel(_id, **data)
             except Exception:
                 return {"message": "An error occured while adding the job order."}, 500
         else:
-            job_order.technician_name = data["technician_name"]
+            job_order.technician_name = data["technician_id"]
             job_order.item = data["item"]
             job_order.job_description = data["job_description"]
             job_order.brand_id = data["brand_id"]
