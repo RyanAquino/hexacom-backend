@@ -10,9 +10,8 @@ from resources.joborders import JobOrder, JobOrderList, UUID
 from resources.user import UserRegister
 
 app = Flask(__name__)
-
-app.secret_key = "SECRET"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db" Change when no Docker
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:admin@db/hexacom"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # app.config['JWT_AUTH_URL_RULE'] = '/login' # IF we want to change authentication endpooint
 
@@ -35,4 +34,4 @@ api.add_resource(UserRegister, "/register")
 
 if __name__ == "__main__":
     db.init_app(app)
-    app.run(port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
