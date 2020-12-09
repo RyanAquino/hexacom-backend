@@ -9,11 +9,15 @@ class JobOrderModel(db.Model):
     item = db.Column(db.String(80))
     job_description = db.Column(db.String(80))
 
-    def __init__(self, id, technician_name, item, job_description):
-        self.id = id
+    brand_id = db.Column(db.Integer, db.ForeignKey("brands.id"))
+    brand = db.relationship("BrandModel", backref='brands')
+
+    def __init__(self, _id, technician_name, item, job_description, brand_id):
+        self.id = _id
         self.technician_name = technician_name
         self.item = item
         self.job_description = job_description
+        self.brand_id = brand_id
 
     def json(self):
         return {
@@ -21,11 +25,12 @@ class JobOrderModel(db.Model):
             "technician_name": self.technician_name,
             "item": self.item,
             "job_description": self.job_description,
+            "brand": self.brand.name
         }
 
     @classmethod
-    def find_by_id(cls, id):
-        return cls.query.filter_by(id=id).first()
+    def find_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
 
     def save_to_db(self):
         db.session.add(self)
