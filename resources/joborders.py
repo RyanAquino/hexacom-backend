@@ -21,7 +21,7 @@ class JobOrder(Resource):
     @jwt_required()
     def post(self, id):
         if not str(id).startswith("JO") and len(id) != 9:
-            return {"message": "The job order is invalid.".format(id)}, 400
+            return {"message": "The job order {} is invalid.".format(id)}, 400
 
         if JobOrderModel.find_by_id(id):
             return {
@@ -33,7 +33,7 @@ class JobOrder(Resource):
 
         try:
             job_order.save_to_db()
-        except:
+        except Exception:
             return {"message": "An error occured while adding the job order."}, 500
 
         return job_order.json(), 201
@@ -60,7 +60,7 @@ class JobOrder(Resource):
         if job_order is None:
             try:
                 job_order = JobOrderModel(id, **data)
-            except:
+            except Exception:
                 return {"message": "An error occured while adding the job order."}, 500
         else:
             job_order.technician_name = data["technician_name"]
