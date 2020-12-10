@@ -1,0 +1,371 @@
+openapi: 3.0.0
+info:
+ description: Hexacom-api
+ version: 1.0.0
+ title: Hexacom-Flask-Rest-API
+ contact:
+ email: heinrichbangui@gmail.com
+ license:
+ name: MIT
+ url: https://opensource.org/licenses/MIT
+
+servers:
+ - url: "/"
+
+tags:
+ - name: Users
+   description: API for user related action
+ - name: Brands
+   description: API for accessing and adding brands
+ - name: Job Orders
+   description: API for accessing Job Orders
+
+
+paths:
+
+ /job_orders:
+  get:
+   tags:
+    - Job Orders
+   summary: Returns all job orders from the system
+   security:
+    - bearerAuth: [ ]
+   responses:
+    '200':
+     description: A list of job orders.
+     schema:
+      type: array
+      brand:
+       $ref: '#/components/schemas/jobOrder'
+ "/job_order/generate_uid":
+  get:
+   tags:
+    - Job Orders
+   summary: Generate a job order id
+   security:
+    - bearerAuth: [ ]
+   responses:
+    '200':
+     description: An auto generated uuid for job order creation.
+     schema:
+      type: string
+      brand:
+       $ref: '#/components/schemas/id'
+ "/job_order/{id}":
+  get:
+   tags:
+    - Job Orders
+   summary: Get the Job Order with a given id
+   security:
+    - bearerAuth: [ ]
+   parameters:
+    - in: path
+      name: id
+      required: true
+      description: Job Order ID
+      schema:
+       "$ref": "#/components/schemas/id"
+   responses:
+    '200':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/jobOrder"
+    '400':
+     description: Invalid request.
+    '404':
+     description: Job Order not found.
+  post:
+   tags:
+    - Job Orders
+   summary: Create a new Job Order
+   security:
+    - bearerAuth: [ ]
+   parameters:
+    - in: path
+      name: id
+      required: true
+      description: Job Order ID
+      schema:
+       "$ref": "#/components/schemas/id"
+   requestBody:
+    description: Job Order Post Object
+    required: true
+    content:
+     application/json:
+      schema:
+       "$ref": "#/components/schemas/jobOrderPostBody"
+   produces:
+    - application/json
+   responses:
+    '201':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/jobOrder"
+    '400':
+     description: Failed. Bad post data.
+  delete:
+   summary: Delete a job order by id
+   security:
+    - bearerAuth: [ ]
+   tags:
+    - Job Orders
+   parameters:
+    - in: path
+      name: id
+      required: true
+      description: Job Order ID
+      schema:
+       "$ref": "#/components/schemas/id"
+   responses:
+    '200':
+     description: OK
+ /brands:
+  get:
+   tags:
+    - Brands
+   summary: Returns all brands from the system
+   security:
+    - bearerAuth: [ ]
+   responses:
+    '200':
+     description: A list of brands.
+     schema:
+      type: array
+      brand:
+       $ref: '#/components/schemas/brand'
+ "/brand/{name}":
+  get:
+   tags:
+    - Brands
+   summary:  Get the brand with a given name
+   security:
+    - bearerAuth: [ ]
+   parameters:
+    - in: path
+      name: name
+      required: true
+      description: Brand Name
+      schema:
+       "$ref": "#/components/schemas/name"
+   responses:
+    '200':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/brand"
+    '400':
+     description: Invalid request.
+    '404':
+     description: Brand not found.
+  post:
+   tags:
+    - Brands
+   summary: Create a new brand
+   security:
+    - bearerAuth: [ ]
+   parameters:
+    - in: path
+      name: name
+      required: true
+      description: Brand Name
+      schema:
+       "$ref": "#/components/schemas/name"
+   produces:
+    - application/json
+   responses:
+    '201':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/brand"
+    '400':
+     description: Failed. Bad post data.
+  delete:
+   summary: Delete a brand by name
+   security:
+    - bearerAuth: [ ]
+   tags:
+    - Brands
+   parameters:
+    - in: path
+      name: name
+      required: true
+      description: Brand Name
+      schema:
+       "$ref": "#/components/schemas/name"
+   responses:
+    '200':
+     description: OK
+ "/login":
+  post:
+   tags:
+    - Users
+   summary: Authenticate user
+   requestBody:
+    description: User Post object
+    required: true
+    content:
+     application/json:
+      schema:
+       "$ref": "#/components/schemas/loginRequestBody"
+   responses:
+    '200':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/user"
+ "/register":
+  post:
+   tags:
+    - Users
+   summary: Register a user
+   requestBody:
+    description: User Post object
+    required: true
+    content:
+     application/json:
+      schema:
+       "$ref": "#/components/schemas/registerRequestBody"
+   responses:
+    '200':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/user"
+ /users:
+  get:
+   tags:
+    - Users
+   summary: Returns all users from the system
+   security:
+    - bearerAuth: [ ]
+   responses:
+    '200':
+     description: A list of users.
+     schema:
+      type: array
+      brand:
+       $ref: '#/components/schemas/user'
+ "/user/{username}":
+  get:
+   tags:
+    - Users
+   summary: Get the user with a given username
+   security:
+    - bearerAuth: [ ]
+   parameters:
+    - in: path
+      name: username
+      required: true
+      description: Username
+      schema:
+       "$ref": "#/components/schemas/username"
+   responses:
+    '200':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/user"
+    '400':
+     description: Invalid request.
+    '404':
+     description: User not found.
+  delete:
+   summary: Delete a user by username
+   security:
+    - bearerAuth: [ ]
+   tags:
+    - Users
+   parameters:
+    - in: path
+      name: username
+      required: true
+      description: Username
+      schema:
+       "$ref": "#/components/schemas/username"
+   responses:
+    '200':
+     description: OK
+
+components:
+ securitySchemes:
+  bearerAuth:
+   type: apiKey
+   name: Authorization
+   in: header
+  security:
+   - bearerAuth: []
+
+ schemas:
+  id:
+   type: string
+  name:
+   type: string
+  username:
+   type: string
+
+  brand:
+   type: object
+   properties:
+    id:
+     type: integer
+    name:
+     type: string
+    job_orders:
+     type: list
+  jobOrder:
+   type: object
+   properties:
+    job_id:
+     type: string
+    technician_name:
+     type: string
+    item:
+     type: string
+    job_description:
+     type: string
+    brand:
+     type: string
+  user:
+   type: object
+   properties:
+    id:
+     type: integer
+    name:
+     type: string
+    username:
+     type: string
+    job_orders:
+     type: list
+
+  loginRequestBody:
+   type: object
+   properties:
+    username:
+     type: string
+     format: string
+    password:
+     type: string
+     format: string
+  registerRequestBody:
+   type: object
+   properties:
+    username:
+     type: string
+     format: string
+    password:
+     type: string
+     format: string
+    name:
+     type: string
+     format: string
+  jobOrderPostBody:
+   type: object
+   properties:
+    item:
+     type: string
+     format: string
+    job_description:
+     type: string
+     format: string
+    technician_id:
+     type: integer
+     format: integer
+    brand_id:
+     type: integer
+     format: integer

@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from models.joborders import JobOrderModel
 from models.brands import BrandModel
+from models.user import UserModel
 from flask_jwt import jwt_required
 
 
@@ -40,7 +41,7 @@ class JobOrder(Resource):
 
         brand = BrandModel.find_by_id(data["brand_id"])
 
-        user_id = BrandModel.find_by_id(data["technician_id"])
+        user_id = UserModel.find_by_id(data["technician_id"])
 
         if not brand:
             return {
@@ -67,7 +68,7 @@ class JobOrder(Resource):
         if job_order:
             job_order.delete_from_db()
 
-            return {"message": "Job order deleted."}
+        return {"message": "Job order deleted."}
 
     @jwt_required()
     def put(self, _id):
@@ -123,6 +124,6 @@ class UUID(Resource):
 
         if job_order:
             temp = int(job_order.id[2:]) + 1
-            uuid = "JO{}".format(str(temp).zfill(6))
+            uuid = "JO{}".format(str(temp).zfill(7))
 
         return {"uuid": uuid}
