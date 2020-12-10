@@ -14,8 +14,8 @@ class User(Resource):
         return {"message": "User not found."}, 404
 
     @jwt_required()
-    def delete(self, name):
-        brand = UserModel.find_by_name(name)
+    def delete(self, username):
+        brand = UserModel.find_by_username(username)
 
         if brand:
             try:
@@ -25,7 +25,7 @@ class User(Resource):
                     "message": "User can't be deleted. It is associated with a job order. "
                 }
 
-        return {"message": "Brand deleted."}
+        return {"message": "User deleted."}
 
 
 class UserRegister(Resource):
