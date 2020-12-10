@@ -2,6 +2,7 @@ from db import db
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
+from flask_migrate import Migrate
 from datetime import timedelta
 
 from security import authenticate, identity
@@ -24,6 +25,8 @@ app.config["JWT_EXPIRATION_DELTA"] = timedelta(hours=8)
 
 api = Api(app)
 jwt = JWT(app, authenticate, identity)
+db.init_app(app)
+migrate = Migrate(app, db)
 
 # Swagger specific settings
 SWAGGER_URL = "/swagger"
@@ -49,5 +52,4 @@ api.add_resource(UserList, "/users")
 api.add_resource(User, "/user/<string:username>")
 
 if __name__ == "__main__":
-    db.init_app(app)
     app.run(host="0.0.0.0", port=5000, debug=True)
