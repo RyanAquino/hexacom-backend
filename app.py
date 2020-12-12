@@ -13,6 +13,7 @@ from resources.user import UserRegister, UserList, User
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
+
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"  # Change when no Docker
 # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:admin@db/hexacom"
