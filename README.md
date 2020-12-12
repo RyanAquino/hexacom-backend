@@ -47,10 +47,6 @@ virtualenv venv
 ```
 pip install -r requirements.txt
 ```
-#### Initialize database and apply the latest migration
-```
-flask admin db_init
-```
 #### Populate the database with test data. 
 ```
 flask seeder all

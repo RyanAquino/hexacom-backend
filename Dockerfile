@@ -1,5 +1,4 @@
-FROM python:3.7.9-alpine
-RUN apk add build-base
+FROM python:3.7.9
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./
