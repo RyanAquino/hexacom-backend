@@ -15,16 +15,16 @@ from flask_cors import CORS
 
 from cli_functions.admin import admin_bp
 from cli_functions.seeder import seeder_bp
+from flask_migrate import upgrade
+import os
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"  # Change when no Docker
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:admin@db/hexacom"
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    os.environ.get("DB_URI") or "mysql+pymysql://root:admin@127.0.0.1/hexacom"
+)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# IF we want to change authentication endpooint
 app.config["JWT_AUTH_URL_RULE"] = "/login"
-app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
-
-# Set to 8 hours, change the duration of the token
+app.config["JWT_SECRET_KEY"] = "super-secret"
 app.config["JWT_EXPIRATION_DELTA"] = timedelta(hours=8)
 
 api = Api(app)
@@ -33,7 +33,12 @@ db.init_app(app)
 migrate = Migrate(app, db)
 CORS(app)
 
-# Swagger specific settings
+
+@app.before_first_request
+def init_db():
+    upgrade()
+
+
 SWAGGER_URL = "/swagger"
 API_URL = "/static/swagger.yaml"
 SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
