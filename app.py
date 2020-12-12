@@ -13,6 +13,8 @@ from resources.user import UserRegister, UserList, User
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
+from cli_functions.admin import admin_bp
+from cli_functions.seeder import seeder_bp
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"  # Change when no Docker
@@ -38,6 +40,8 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL, API_URL, config={"app_name": "Hexacom-Python-Flask-REST"}
 )
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
+app.register_blueprint(admin_bp)
+app.register_blueprint(seeder_bp)
 
 api.add_resource(JobOrder, "/job_order/<string:_id>")
 api.add_resource(JobOrderList, "/job_orders")
