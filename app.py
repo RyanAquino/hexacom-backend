@@ -11,6 +11,7 @@ from resources.joborders import JobOrder, JobOrderList, UUID
 from resources.brands import Brand, BrandList
 from resources.user import UserRegister, UserList, User
 from flask_swagger_ui import get_swaggerui_blueprint
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"  # Change when no Docker
@@ -27,6 +28,7 @@ api = Api(app)
 jwt = JWT(app, authenticate, identity)
 db.init_app(app)
 migrate = Migrate(app, db)
+CORS(app)
 
 # Swagger specific settings
 SWAGGER_URL = "/swagger"
