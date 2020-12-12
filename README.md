@@ -51,6 +51,16 @@ pip install -r requirements.txt
 ```
 flask admin db_init
 ```
+#### Populate the database with test data. 
+```
+flask seeder all
+```
+#### Removing the test data
+```
+flask seeder all --remove
+```
+Note: You may replace `all` with specific table. More options can be found using
+`flask seeder` command.
 #### Create an admin user using the command line
 ```
 flask admin create_admin_user

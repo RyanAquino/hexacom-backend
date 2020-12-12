@@ -6,25 +6,25 @@ from db import db
 
 from models.user import UserModel
 
-cli_bp = Blueprint("admin", __name__)
+admin_bp = Blueprint("admin", __name__)
 
 
-@cli_bp.cli.command("db_init")
+@admin_bp.cli.command("db_init")
 def initialize_database():
     """Initialize the database and upgrde. """
     db.create_all()
     upgrade()
-    print("Done.")
+    print("Database Created!.")
 
 
-@cli_bp.cli.command("db_drop")
+@admin_bp.cli.command("db_drop")
 def db_drop():
     """Drop the database. """
     db.drop_all()
     print("Database dropped!")
 
 
-@cli_bp.cli.command("create_admin_user")
+@admin_bp.cli.command("create_admin_user")
 def create_admin():
     """Create an admin account."""
     retries = 3
