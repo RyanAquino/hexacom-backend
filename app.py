@@ -4,12 +4,12 @@ from flask_restful import Api
 from flask_jwt import JWT
 from flask_migrate import Migrate
 from datetime import timedelta
-
 from security import authenticate, identity
 
 from resources.joborders import JobOrder, JobOrderList, UUID
 from resources.brands import Brand, BrandList
 from resources.user import UserRegister, UserList, User
+
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
 
@@ -37,12 +37,6 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL, API_URL, config={"app_name": "Hexacom-Python-Flask-REST"}
 )
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
-
-
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
 
 api.add_resource(JobOrder, "/job_order/<string:_id>")
 api.add_resource(JobOrderList, "/job_orders")
