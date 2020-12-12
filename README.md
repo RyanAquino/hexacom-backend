@@ -46,14 +46,18 @@ virtualenv venv
 
 ```
 pip install -r requirements.txt
-
 ```
-#### To synchronize the database, make sure to pull the latest migrations from the source and execute the command below.
+#### Initialize database and apply the latest migration
+```
+flask admin db_init
+```
+#### Create an admin user using the command line
+```
+flask admin create_admin_user
 ```
 
-flask db upgrade
+Note: You may view more commands using `flask admin`.
 
-```
 #### Starting the application
 ```
 python app.py
