@@ -1,5 +1,5 @@
 from db import db
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt import JWT
 from flask_migrate import Migrate
@@ -37,6 +37,13 @@ CORS(app)
 @app.before_first_request
 def init_db():
     upgrade()
+
+
+@jwt.auth_response_handler
+def customized_response_handler(access_token, identity):
+    return jsonify(
+        {"access_token": access_token.decode("utf-8"), "username": identity.username}
+    )
 
 
 SWAGGER_URL = "/swagger"
