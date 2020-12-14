@@ -354,6 +354,18 @@ components:
     name:
      type: string
      format: string
+    number:
+     type: string
+     format: string
+    address:
+     type: string
+     format: string
+    status:
+     type: string
+     enum: [active, inactive]
+    type:
+     type: string
+     enum: [admin, user]
   jobOrderPostBody:
    type: object
    properties:

@@ -7,11 +7,11 @@ import click
 seeder_bp = Blueprint("seeder", __name__)
 brands = ["Asus", "Lenovo", "HP", "Dell", "Apple"]
 users = [
-    ["bob", "Bob Durie", "bob"],
-    ["jo", "Jo Michigan", "jo"],
-    ["john", "John Dough", "john"],
-    ["vo", "Vo Vooughan", "vo"],
-    ["jean", "Jean Burton", "jean"],
+    ["bob", "Bob Durie", "bob", "098712374918", "bob's address", "active", "user"],
+    ["jo", "Jo Michigan", "jo", "098731232134", "jo's address", "active", "user"],
+    ["john", "John Dough", "john", "09321314114", "john's address", "active", "user"],
+    ["vo", "Vo Vooughan", "vo", "09321231231", "vo's address", "active", "user"],
+    ["jean", "Jean Burton", "jean", "09321231231", "jean's address", "active", "user"],
 ]
 job_orders = [
     ["JO0000001", "Laptop", "Fix battery"],
@@ -38,7 +38,6 @@ def seed(remove):
                 brand.delete_from_db()
             if user:
                 user.delete_from_db()
-            print("Dataset does not exist..")
         else:
             print(f"Creating dataset {i+1}..")
             brand = BrandModel(brands[i])

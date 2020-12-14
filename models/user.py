@@ -1,4 +1,15 @@
 from db import db
+import enum
+
+
+class Status(enum.Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
+class Types(enum.Enum):
+    USER = "user"
+    ADMIN = "admin"
 
 
 class UserModel(db.Model):
@@ -8,19 +19,31 @@ class UserModel(db.Model):
     username = db.Column(db.String(80))
     name = db.Column(db.String(80))
     password = db.Column(db.String(80))
+    number = db.Column(db.String(20))
+    address = db.Column(db.String(100))
+    status = db.Column(db.Enum(Status))
+    type = db.Column(db.Enum(Types))
 
     job_orders = db.relationship("JobOrderModel", lazy="dynamic")
 
-    def __init__(self, username, name, password):
+    def __init__(self, username, name, password, number, address, status, type):
         self.username = username
         self.name = name
         self.password = password
+        self.number = number
+        self.address = address
+        self.status = status
+        self.type = type
 
     def json(self):
         return {
             "id": self.id,
             "name": self.name,
             "username": self.username,
+            "number": self.number,
+            "address": self.address,
+            "status": self.status.value,
+            "type": self.type.value,
             "job_orders": [job_order.json() for job_order in self.job_orders.all()],
         }
 
