@@ -7,6 +7,8 @@ class JobOrderModel(db.Model):
     id = db.Column(db.String(80), primary_key=True)
     item = db.Column(db.String(80))
     job_description = db.Column(db.String(80))
+    date_received = db.Column(db.DateTime, server_default=db.func.now())
+    date_released = db.Column(db.DateTime)
 
     user_id = db.Column(
         db.Integer, db.ForeignKey("users.id", ondelete="RESTRICT"), nullable=False
@@ -31,6 +33,10 @@ class JobOrderModel(db.Model):
             "technician_name": self.user.name,
             "item": self.item,
             "job_description": self.job_description,
+            "date_received": self.date_received.strftime("%b %d, %Y %I:%M"),
+            "date_released": self.date_released.strftime("%b %d, %Y %I:%M")
+            if self.date_released
+            else None,
             "brand": self.brand.name,
         }
 

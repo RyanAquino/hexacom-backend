@@ -1,8 +1,8 @@
-"""Initial migrations
+"""Initial migration
 
-Revision ID: 9af86db8eb41
+Revision ID: 0f90c7fb9ab8
 Revises:
-Create Date: 2020-12-13 23:10:40.492020
+Create Date: 2020-12-15 20:47:17.019411
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "9af86db8eb41"
+revision = "0f90c7fb9ab8"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,6 +30,12 @@ def upgrade():
         sa.Column("username", sa.String(length=80), nullable=True),
         sa.Column("name", sa.String(length=80), nullable=True),
         sa.Column("password", sa.String(length=80), nullable=True),
+        sa.Column("number", sa.String(length=20), nullable=True),
+        sa.Column("address", sa.String(length=100), nullable=True),
+        sa.Column(
+            "status", sa.Enum("ACTIVE", "INACTIVE", name="status"), nullable=True
+        ),
+        sa.Column("type", sa.Enum("USER", "ADMIN", name="types"), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -37,6 +43,13 @@ def upgrade():
         sa.Column("id", sa.String(length=80), nullable=False),
         sa.Column("item", sa.String(length=80), nullable=True),
         sa.Column("job_description", sa.String(length=80), nullable=True),
+        sa.Column(
+            "date_received",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=True,
+        ),
+        sa.Column("date_released", sa.DateTime(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=False),
         sa.Column("brand_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(["brand_id"], ["brands.id"], ondelete="RESTRICT"),

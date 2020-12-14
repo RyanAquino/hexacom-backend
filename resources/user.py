@@ -39,6 +39,18 @@ class UserRegister(Resource):
     parser.add_argument(
         "password", type=str, required=True, help="This field can't be blank."
     )
+    parser.add_argument(
+        "number", type=str, required=True, help="This field can't be blank."
+    )
+    parser.add_argument(
+        "address", type=str, required=True, help="This field can't be blank."
+    )
+    parser.add_argument(
+        "status", type=str, required=True, help="This field can't be blank."
+    )
+    parser.add_argument(
+        "type", type=str, required=True, help="This field can't be blank."
+    )
 
     def post(self):
         data = UserRegister.parser.parse_args()
