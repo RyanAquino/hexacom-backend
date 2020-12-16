@@ -37,6 +37,24 @@ paths:
       type: array
       brand:
        $ref: '#/components/schemas/jobOrder'
+
+ /release/{id}:
+  post:
+   tags:
+    - Job Orders
+   summary: Release an item
+   security:
+    - bearerAuth: [ ]
+   parameters:
+    - in: path
+      name: id
+      required: true
+      description: Job Order ID
+      schema:
+       "$ref": "#/components/schemas/id"
+   produces:
+    - application/json
+
  "/job_order/generate_uid":
   get:
    tags:
@@ -51,6 +69,7 @@ paths:
       type: string
       brand:
        $ref: '#/components/schemas/id'
+
  "/job_order/{id}":
   get:
    tags:
@@ -74,6 +93,7 @@ paths:
      description: Invalid request.
     '404':
      description: Job Order not found.
+
   post:
    tags:
     - Job Orders
@@ -103,6 +123,8 @@ paths:
       "$ref": "#/components/schemas/jobOrder"
     '400':
      description: Failed. Bad post data.
+
+
   delete:
    summary: Delete a job order by id
    security:
@@ -211,6 +233,19 @@ paths:
      description: OK
      schema:
       "$ref": "#/components/schemas/user"
+ "/logout":
+  post:
+   tags:
+    - Users
+   summary: Revoke access
+   security:
+    - bearerAuth: [ ]
+   responses:
+    '200':
+     description: OK
+     schema:
+      "$ref": "#/components/schemas/user"
+
  "/register":
   post:
    tags:
@@ -229,6 +264,7 @@ paths:
      schema:
       "$ref": "#/components/schemas/user"
  /users:
+
   get:
    tags:
     - Users
@@ -242,6 +278,7 @@ paths:
       type: array
       brand:
        $ref: '#/components/schemas/user'
+
  "/user/{username}":
   get:
    tags:
@@ -265,8 +302,26 @@ paths:
      description: Invalid request.
     '404':
      description: User not found.
+
   delete:
    summary: Delete a user by username
+   security:
+    - bearerAuth: [ ]
+   tags:
+    - Users
+   parameters:
+    - in: path
+      name: username
+      required: true
+      description: Username
+      schema:
+       "$ref": "#/components/schemas/username"
+   responses:
+    '200':
+     description: OK
+
+  put:
+   summary: Activate a user using username
    security:
     - bearerAuth: [ ]
    tags:
@@ -288,8 +343,9 @@ components:
    type: apiKey
    name: Authorization
    in: header
+
   security:
-   - bearerAuth: []
+   - bearerAuth: [ ]
 
  schemas:
   id:
@@ -342,6 +398,7 @@ components:
     password:
      type: string
      format: string
+
   registerRequestBody:
    type: object
    properties:
@@ -366,6 +423,7 @@ components:
     type:
      type: string
      enum: [admin, user]
+
   jobOrderPostBody:
    type: object
    properties:
@@ -375,9 +433,6 @@ components:
     job_description:
      type: string
      format: string
-    technician_id:
-     type: integer
-     format: integer
-    brand_id:
-     type: integer
-     format: integer
+    brand_name:
+     type: string
+     format: string
