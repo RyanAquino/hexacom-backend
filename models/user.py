@@ -62,3 +62,11 @@ class UserModel(db.Model):
     def delete_from_db(self):
         db.session.delete(self)
         db.session.commit()
+
+    def deactivate(self):
+        self.status = "inactive"
+        db.session.commit()
+
+    def activate(self):
+        self.status = "active"
+        db.session.commit()

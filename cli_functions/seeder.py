@@ -1,5 +1,6 @@
 from flask import Blueprint
-from models.brands import BrandModel
+
+# from models.brands import BrandModel
 from models.user import UserModel
 from models.joborders import JobOrderModel
 import click
@@ -26,7 +27,7 @@ job_orders = [
 @click.option("--remove/--add", default=False)
 def seed(remove):
     for i in range(len(brands)):
-        brand = BrandModel.find_by_name(brands[i])
+        # brand = BrandModel.find_by_name(brands[i])
         job_order = JobOrderModel.find_by_id(job_orders[i][0])
         user = UserModel.find_by_username(users[i][0])
 
@@ -34,19 +35,19 @@ def seed(remove):
             print(f"Removing sample dataset {i+1}..")
             if job_order:
                 job_order.delete_from_db()
-            if brand:
-                brand.delete_from_db()
+            # if brand:
+            #     brand.delete_from_db()
             if user:
                 user.delete_from_db()
         else:
             print(f"Creating dataset {i+1}..")
-            brand = BrandModel(brands[i])
-            brand.save_to_db()
+            # brand = BrandModel(brands[i])
+            # brand.save_to_db()
 
             user = UserModel(*users[i])
             user.save_to_db()
 
-            job_order = JobOrderModel(*job_orders[i], brand.id, user.id)
+            job_order = JobOrderModel(*job_orders[i], brands[i], user.id)
             job_order.save_to_db()
 
 
@@ -71,27 +72,26 @@ def user_seeder(remove):
                 print(f"User {i+1} already exists.")
 
 
-@seeder_bp.cli.command("brands")
-@click.option("--remove/--add", default=False)
-def brand_seeder(*remove):
-    print("Brand Seeder")
-    for i in range(len(brands)):
-        brand = BrandModel.find_by_name(brands[i])
-        if remove:
-            if brand:
-                print(f"Removing brand {i+1}..")
-                brand.delete_from_db()
-            else:
-                print(f"Brand {i+1} does not exist.")
-        else:
-            if not brand:
-                print(f"Creating brand {i+1}..")
-                brand = BrandModel(brands[i])
-                brand.save_to_db()
-            else:
-                print(f"Brand {i+1} already exists.")
-
-
+# @seeder_bp.cli.command("brands")
+# @click.option("--remove/--add", default=False)
+# def brand_seeder(*remove):
+#     print("Brand Seeder")
+#     for i in range(len(brands)):
+#         brand = BrandModel.find_by_name(brands[i])
+#         if remove:
+#             if brand:
+#                 print(f"Removing brand {i+1}..")
+#                 brand.delete_from_db()
+#             else:
+#                 print(f"Brand {i+1} does not exist.")
+#         else:
+#             if not brand:
+#                 print(f"Creating brand {i+1}..")
+#                 brand = BrandModel(brands[i])
+#                 brand.save_to_db()
+#             else:
+#                 print(f"Brand {i+1} already exists.")
+#
 @seeder_bp.cli.command("job_orders")
 @click.option("--remove/--add", default=False)
 def job_order_seeder(remove):
@@ -105,12 +105,11 @@ def job_order_seeder(remove):
             else:
                 print(f"Job Order {i+1} not found.")
         else:
-            brand = BrandModel.find_by_name(brands[i])
             user = UserModel.find_by_username(users[i][0])
 
-            if brand and user:
+            if user:
                 print(f"Creating job orders {i+1}..")
-                job_order = JobOrderModel(*job_orders[i], brand.id, user.id)
+                job_order = JobOrderModel(*job_orders[i], brands[i], user.id)
                 job_order.save_to_db()
             else:
                 print(
