@@ -15,8 +15,6 @@ servers:
 tags:
  - name: Users
    description: API for user related action
- - name: Brands
-   description: API for accessing and adding brands
  - name: Job Orders
    description: API for accessing Job Orders
 
@@ -141,81 +139,6 @@ paths:
    responses:
     '200':
      description: OK
- /brands:
-  get:
-   tags:
-    - Brands
-   summary: Returns all brands from the system
-   security:
-    - bearerAuth: [ ]
-   responses:
-    '200':
-     description: A list of brands.
-     schema:
-      type: array
-      brand:
-       $ref: '#/components/schemas/brand'
- "/brand/{name}":
-  get:
-   tags:
-    - Brands
-   summary:  Get the brand with a given name
-   security:
-    - bearerAuth: [ ]
-   parameters:
-    - in: path
-      name: name
-      required: true
-      description: Brand Name
-      schema:
-       "$ref": "#/components/schemas/name"
-   responses:
-    '200':
-     description: OK
-     schema:
-      "$ref": "#/components/schemas/brand"
-    '400':
-     description: Invalid request.
-    '404':
-     description: Brand not found.
-  post:
-   tags:
-    - Brands
-   summary: Create a new brand
-   security:
-    - bearerAuth: [ ]
-   parameters:
-    - in: path
-      name: name
-      required: true
-      description: Brand Name
-      schema:
-       "$ref": "#/components/schemas/name"
-   produces:
-    - application/json
-   responses:
-    '201':
-     description: OK
-     schema:
-      "$ref": "#/components/schemas/brand"
-    '400':
-     description: Failed. Bad post data.
-  delete:
-   summary: Delete a brand by name
-   security:
-    - bearerAuth: [ ]
-   tags:
-    - Brands
-   parameters:
-    - in: path
-      name: name
-      required: true
-      description: Brand Name
-      schema:
-       "$ref": "#/components/schemas/name"
-   responses:
-    '200':
-     description: OK
  "/login":
   post:
    tags:
@@ -233,6 +156,7 @@ paths:
      description: OK
      schema:
       "$ref": "#/components/schemas/user"
+
  "/logout":
   post:
    tags:
@@ -263,6 +187,7 @@ paths:
      description: OK
      schema:
       "$ref": "#/components/schemas/user"
+
  /users:
 
   get:
@@ -303,12 +228,11 @@ paths:
     '404':
      description: User not found.
 
-  delete:
-   summary: Delete a user by username
-   security:
-    - bearerAuth: [ ]
+ "/user_switch/{username}":
+  post:
    tags:
     - Users
+   summary: Swith user to activate or deactivate
    parameters:
     - in: path
       name: username
@@ -316,26 +240,34 @@ paths:
       description: Username
       schema:
        "$ref": "#/components/schemas/username"
+   security:
+    - bearerAuth: [ ]
    responses:
     '200':
      description: OK
+     schema:
+      "$ref": "#/components/schemas/user"
+    '404':
+     description: User not found.
 
-  put:
-   summary: Activate a user using username
-   security:
-    - bearerAuth: [ ]
+ "/change_password":
+  post:
    tags:
     - Users
-   parameters:
-    - in: path
-      name: username
-      required: true
-      description: Username
+   summary: Change password of the user
+   security:
+     - bearerAuth: [ ]
+   requestBody:
+    description: Password change post object
+    required: true
+    content:
+     application/json:
       schema:
-       "$ref": "#/components/schemas/username"
-   responses:
-    '200':
-     description: OK
+       "$ref": "#/components/schemas/passwordRequestBody"
+    responses:
+     '200':
+      description: OK
+
 
 components:
  securitySchemes:
@@ -423,6 +355,16 @@ components:
     type:
      type: string
      enum: [admin, user]
+
+  passwordRequestBody:
+   type: object
+   properties:
+    old_password:
+     type: string
+     format: string
+    password:
+     type: string
+     format: string
 
   jobOrderPostBody:
    type: object

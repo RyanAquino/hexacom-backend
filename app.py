@@ -9,9 +9,15 @@ from datetime import timedelta
 from db import db
 
 from resources.joborders import JobOrder, JobOrderList, UUID, Release
-
-# from resources.brands import Brand, BrandList
-from resources.user import UserRegister, UserList, User, Login, Logout
+from resources.user import (
+    UserRegister,
+    UserList,
+    User,
+    Login,
+    Logout,
+    PasswordChange,
+    UserSwitch,
+)
 
 from cli_functions.admin import admin_bp
 from cli_functions.seeder import seeder_bp
@@ -48,15 +54,16 @@ app.register_blueprint(seeder_bp)
 
 api.add_resource(JobOrder, "/job_order/<string:_id>")
 api.add_resource(JobOrderList, "/job_orders")
-# api.add_resource(Brand, "/brand/<string:name>")
-# api.add_resource(BrandList, "/brands")
 api.add_resource(UUID, "/job_order/generate_uid")
 api.add_resource(Release, "/release/<string:_id>")
+
+api.add_resource(PasswordChange, "/change_password")
 api.add_resource(UserRegister, "/register")
 api.add_resource(UserList, "/users")
 api.add_resource(User, "/user/<string:username>")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
+api.add_resource(UserSwitch, "/user_switch/<string:username>")
 
 
 @jwt.token_in_blacklist_loader
