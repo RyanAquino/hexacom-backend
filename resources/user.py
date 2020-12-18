@@ -28,28 +28,6 @@ class User(Resource):
 
         return {"message": "User not found."}, 404
 
-    @admin_required
-    def delete(self, username):
-        user = UserModel.find_by_username(username)
-        if user:
-            try:
-                user.deactivate()
-            except Exception:
-                return {"message": "An error occured when deactivating account."}
-
-        return {"message": "User has been deactivated."}
-
-    @admin_required
-    def put(self, username):
-        user = UserModel.find_by_username(username)
-        if user:
-            try:
-                user.deactivate()
-            except Exception:
-                return {"message": "An error occured when activating account."}
-
-        return {"message": "User has been activated."}
-
 
 class UserRegister(Resource):
     parser = reqparse.RequestParser()
@@ -91,7 +69,13 @@ class UserList(Resource):
     @admin_required
     def get(self):
         current_user = UserModel.find_by_username(get_jwt_identity())
-        return {"user": [user.json() for user in UserModel.query.all() if user.username != current_user.username]}
+        return {
+            "user": [
+                user.json()
+                for user in UserModel.query.all()
+                if user.username != current_user.username
+            ]
+        }
 
 
 class Login(Resource):
@@ -106,6 +90,9 @@ class Login(Resource):
     def post(self):
         data = Login.parser.parse_args()
         user = UserModel.find_by_username(data["username"])
+
+        if not user:
+            return {"message": "The user is non-existent."}, 401
 
         if user.status.value != "active":
             return {
@@ -126,3 +113,47 @@ class Logout(Resource):
         print(Blacklist.verify_token(jti))
         blacklist.add()
         return {"message": "Successfully logged out"}
+
+
+class PasswordChange(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument(
+        "old_password", type=str, required=True, help="This field can't be blank."
+    )
+    parser.add_argument(
+        "password", type=str, required=True, help="This field can't be blank."
+    )
+
+    @jwt_required
+    def post(self):
+        user = UserModel.find_by_username(get_jwt_identity())
+        data = PasswordChange.parser.parse_args()
+
+        if not safe_str_cmp(user.password, data["old_password"]):
+            return {"message": "Old Password does not match."}, 401
+
+        if safe_str_cmp(data["password"], data["old_password"]):
+            return {
+                "message": "Your password is the same with the current password."
+            }, 400
+
+        user.change_password(data["password"])
+
+        return {"message": "Password changed."}
+
+
+class UserSwitch(Resource):
+    @admin_required
+    def post(self, username):
+        user = UserModel.find_by_username(username)
+
+        if user:
+            try:
+                status = user.switch()
+            except Exception as e:
+                print(e)
+                return {"message": "An error occured when switching account."}
+
+            return {"message": f"User has been {status}."}
+
+        return {"message": "User is non existent."}, 404

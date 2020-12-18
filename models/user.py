@@ -63,10 +63,18 @@ class UserModel(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def deactivate(self):
-        self.status = "inactive"
-        db.session.commit()
+    def switch(self):
+        stat = "activated"
 
-    def activate(self):
-        self.status = "active"
+        if self.status.value == "active":
+            self.status = "inactive"
+            stat = "deactivated"
+        else:
+            self.status = "active"
+
+        db.session.commit()
+        return stat
+
+    def change_password(self, new_password):
+        self.password = new_password
         db.session.commit()
