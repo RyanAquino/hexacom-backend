@@ -1,27 +1,30 @@
 version: '3'
 services:
-  db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: hexacom
-    ports:
-      - "3306:3306"
-    expose:
-      - "3306"
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8081:8080
-  api:
-    depends_on:
-      - db
-    environment:
-      - DB_URI=mysql+pymysql://root:admin@db/hexacom
-    build: .
-    ports:
-      - "8082:5000"
+ db:
+  image: mysql
+  command: --default-authentication-plugin=mysql_native_password
+  restart: always
+  environment:
+   - MYSQL_ROOT_PASSWORD=admin
+   - MYSQL_DATABASE=hexacom
+ adminer:
+  image: adminer
+  restart: always
+  ports:
+   - 8081:8080
+ api:
+  depends_on:
+   - db
+  environment:
+   - DB_URI=mysql+pymysql://root:admin@db/hexacom
+  build: .
+ client:
+  depends_on:
+    - db
+  stdin_open: true
+  build:
+   dockerfile: Dockerfile
+   context: ../hexacom-frontend
+  ports:
+   - 80:80
 
