@@ -16,6 +16,12 @@ from resources.jwt_custom_decorators import admin_required
 class User(Resource):
     @jwt_required
     def get(self, username):
+        """
+        Get a user using a specific username
+
+        :param username:
+        :return: an info about the user in json format
+        """
         current_user = UserModel.find_by_username(get_jwt_identity())
 
         if current_user.type.value == "user" and current_user.username != username:
@@ -54,6 +60,9 @@ class UserRegister(Resource):
     )
 
     def post(self):
+        """
+        Create a new regular user.
+        """
         data = UserRegister.parser.parse_args()
 
         if UserModel.find_by_username(data["username"]):
@@ -68,6 +77,11 @@ class UserRegister(Resource):
 class UserList(Resource):
     @admin_required
     def get(self):
+        """
+        Return a list of users in json format
+
+        :return: list of users in json format
+        """
         current_user = UserModel.find_by_username(get_jwt_identity())
         return {
             "user": [
@@ -88,6 +102,11 @@ class Login(Resource):
     )
 
     def post(self):
+        """
+        Authenticate user by an access token
+
+        :return: Access token generated
+        """
         data = Login.parser.parse_args()
         user = UserModel.find_by_username(data["username"])
 
@@ -108,6 +127,9 @@ class Login(Resource):
 class Logout(Resource):
     @jwt_required
     def post(self):
+        """
+        Revoke the access token
+        """
         jti = get_raw_jwt()["jti"]
         blacklist = Blacklist(jti)
         print(Blacklist.verify_token(jti))
@@ -126,6 +148,10 @@ class PasswordChange(Resource):
 
     @jwt_required
     def post(self):
+        """
+        Change the user's password.
+
+        """
         user = UserModel.find_by_username(get_jwt_identity())
         data = PasswordChange.parser.parse_args()
 
@@ -145,6 +171,10 @@ class PasswordChange(Resource):
 class UserSwitch(Resource):
     @admin_required
     def post(self, username):
+        """
+        Activate or deactivate a user.
+        :param username: string
+        """
         user = UserModel.find_by_username(username)
 
         if user:

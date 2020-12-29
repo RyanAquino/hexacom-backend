@@ -1,8 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.joborders import JobOrderModel
 from models.user import UserModel
-
-# from models.brands import BrandModel
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
@@ -10,13 +8,16 @@ class JobOrder(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("item", type=str)
     parser.add_argument("job_description", type=str)
-    # parser.add_argument(
-    #     "brand_id", type=int, required=True, help="Brand ID is required"
-    # )
     parser.add_argument("brand_name", type=str)
 
     @jwt_required
     def get(self, _id):
+        """
+        Get a job order using an id.
+
+        :param _id: string
+        :return: a job order in json format
+        """
         job_order = JobOrderModel.find_by_id(_id)
 
         if job_order:
@@ -26,6 +27,12 @@ class JobOrder(Resource):
 
     @jwt_required
     def post(self, _id):
+        """
+        Create a job order
+
+        :param _id: string
+        :return: the newly created job order.
+        """
         if JobOrderModel.find_by_id(_id):
             return {
                 "message": "A Job Order with id '{}' already exists.".format(_id)
@@ -35,14 +42,7 @@ class JobOrder(Resource):
             return {"message": "The job order {} is invalid.".format(_id)}, 400
 
         data = JobOrder.parser.parse_args()
-        # brand = BrandModel.find_by_id(data["brand_id"])
         user = UserModel.find_by_username(get_jwt_identity())
-        print()
-
-        # if not brand:
-        #     return {
-        #         "message": "The Brand ID {} is not found.".format(data["brand_id"])
-        #     }, 400
 
         try:
             job_order = JobOrderModel(_id, **data, technician_id=user.id)
@@ -55,6 +55,11 @@ class JobOrder(Resource):
 
     @jwt_required
     def delete(self, _id):
+        """
+        Delete a job order.
+
+        :param _id: string
+        """
         job_order = JobOrderModel.find_by_id(_id)
 
         if job_order:
@@ -66,6 +71,11 @@ class JobOrder(Resource):
 class JobOrderList(Resource):
     @jwt_required
     def get(self):
+        """
+        Return a list of job orders.
+
+        :return: job order list
+        """
         user = UserModel.find_by_username(get_jwt_identity())
 
         if user.type.value == "admin":
@@ -78,6 +88,11 @@ class JobOrderList(Resource):
 class UUID(Resource):
     @jwt_required
     def get(self):
+        """
+        Generate a job order ID
+
+        :return: generated job order id string
+        """
         job_order = JobOrderModel.query.order_by(JobOrderModel.id.desc()).first()
         uuid = "JO0000001"
 
@@ -90,6 +105,11 @@ class UUID(Resource):
 
 class Release(Resource):
     def post(self, _id):
+        """
+        Release an item in a job order.
+
+        :param _id: string
+        """
         job_order = JobOrderModel.find_by_id(_id)
 
         if not job_order:
